@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- FAVORITE ICON (FAVICON) -->
-<link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png">
     <title>Toninho Materiais de Construção | Sua Obra do Alicerce ao Acabamento</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -93,15 +92,34 @@
                 <a href="#localizacao" class="hover:text-brandOrange transition">Localização</a>
             </nav>
 
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="https://www.google.com/maps/search/?api=1&query=Av.+Fausto+Pietrobom,+105+-+Jardim+Planalto,+Paul%C3%ADnia+-+SP,+13140-031" target="_blank" class="hidden sm:flex bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-md font-bold items-center gap-2 text-xs uppercase border border-slate-200 transition">
-                    <i class="fa-solid fa-location-dot text-brandOrange"></i>
-                    <span>Como Chegar</span>
-                </a>
+            <div class="flex items-center gap-1 sm:gap-2">
+    <!-- BOTAO DE PESQUISA HEADER (SEM CAIXA/BORDA) -->
+    <button id="open-search-bar-btn" class="p-2 text-slate-700 hover:text-brandOrange transition">
+        <i class="fa-solid fa-magnifying-glass text-xl"></i>
+    </button>
 
-                <button id="open-cart-btn" class="relative bg-slate-100 hover:bg-slate-200 p-2.5 rounded-md text-slate-800 transition border border-slate-200">
-                    <i class="fa-solid fa-cart-shopping text-lg"></i>
-                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-brandOrange text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+    <a href="https://www.google.com/maps/search/?api=1&query=Av.+Fausto+Pietrobom,+105+-+Jardim+Planalto,+Paul%C3%ADnia+-+SP,+13140-031" target="_blank" class="hidden sm:flex bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-md font-bold items-center gap-2 text-xs uppercase border border-slate-200 transition">
+        <i class="fa-solid fa-location-dot text-brandOrange"></i>
+        <span>Como Chegar</span>
+    </a>
+
+    <!-- BOTAO DE CARRINHO HEADER (SEM CAIXA/BORDA) -->
+    <button id="open-cart-btn" class="relative p-2 text-slate-700 hover:text-brandOrange transition">
+        <i class="fa-solid fa-cart-shopping text-xl"></i>
+        <span id="cart-badge" class="absolute top-0 right-0 bg-brandOrange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+</div>
+        </div>
+
+        <!-- ABA DE PESQUISA FLUTUANTE -->
+        <div id="header-search-bar" class="hidden bg-slate-100 border-t border-slate-200 p-3 shadow-inner">
+            <div class="container mx-auto flex items-center gap-2">
+                <div class="relative flex-1">
+                    <input type="text" id="header-search-input" placeholder="O que você está procurando?" class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brandOrange">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                </div>
+                <button id="close-search-bar-btn" class="text-slate-500 hover:text-slate-800 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
         </div>
@@ -170,21 +188,19 @@
 
     <!-- SEÇÃO INÍCIO HERO -->
     <section id="inicio" class="w-full bg-slate-900 flex items-center justify-center overflow-hidden">
-        <!-- Imagem para Desktop/PC (visível a partir de telas sm) -->
-        <img src="imagemtopo.png" alt="Banner Principal Toninho Materiais" class="hidden sm:block w-full h-auto max-w-full object-contain" width="1983" height="783">
-        <!-- Imagem para Mobile/Celular (visível apenas em telas menores) -->
-        <img src="imagemtopo2.png" alt="Banner Principal Toninho Materiais Mobile" class="block sm:hidden w-full h-auto max-w-full object-contain">
+        <img src="imagemtopo.png" alt="Banner Principal Toninho Materiais" class="hidden sm:block w-full h-auto max-w-full object-cover" width="1983" height="783">
+        <img src="imagemtopo2.png" alt="Banner Principal Toninho Materiais Mobile" class="block sm:hidden w-full h-auto max-w-full object-cover">
     </section>
 
     <!-- SEÇÃO PRODUTOS E BANNERS DA LOJA -->
     <section id="produtos" class="py-12 bg-slate-50">
-        <div class="container mx-auto px-4 space-y-8">
+        <div class="container mx-auto px-2 sm:px-4 space-y-8">
 
             <!-- BANNERS ROTATIVOS -->
-            <div id="banner-carousel-container" class="relative w-full aspect-[1983/793] max-h-[500px] overflow-hidden rounded-md shadow-sm border border-slate-200 bg-slate-900 group">
+            <div id="banner-carousel-container" class="relative w-full aspect-[1983/793] max-h-[500px] overflow-hidden bg-slate-900 group">
                 <div id="carousel-slides" class="relative w-full h-full">
                     <div class="banner-slide active w-full h-full" data-category="cimentos">
-                        <img src="banner1.png" alt="Promoção 1" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+1'">
+                        <img src="banner1.png" alt="Promoção 1" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+1'">
                         <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
                             <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
                                 Confira Já <i class="fa-solid fa-arrow-right"></i>
@@ -193,7 +209,7 @@
                     </div>
 
                     <div class="banner-slide w-full h-full" data-category="lorenzetti">
-                        <img src="banner2.png" alt="Promoção 2" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+2'">
+                        <img src="banner2.png" alt="Promoção 2" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+2'">
                         <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
                             <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
                                 Confira Já <i class="fa-solid fa-arrow-right"></i>
@@ -202,7 +218,7 @@
                     </div>
 
                     <div class="banner-slide w-full h-full" data-category="lampadas">
-                        <img src="banner3.png" alt="Promoção 3" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+3'">
+                        <img src="banner3.png" alt="Promoção 3" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+3'">
                         <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
                             <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
                                 Confira Já <i class="fa-solid fa-arrow-right"></i>
@@ -226,7 +242,7 @@
             </div>
 
             <!-- TÍTULO E CAMPO DE PESQUISA -->
-            <div class="max-w-2xl mx-auto text-center space-y-4 pt-4">
+            <div class="max-w-2xl mx-auto text-center space-y-4 pt-4 px-2">
                 <div>
                     <h2 class="text-2xl sm:text-3xl font-black text-slate-900 uppercase">Nosso Catálogo</h2>
                     <p class="text-slate-500 text-xs mt-1">Busque itens ou navegue pelas categorias abaixo</p>
@@ -314,7 +330,6 @@
                     <h1 id="modal-title" class="text-2xl font-black text-slate-900 uppercase"></h1>
                     <p id="modal-category" class="text-xs font-bold text-brandOrange uppercase"></p>
                     
-                    <!-- EXIBIÇÃO DE PREÇO -->
                     <div class="text-2xl font-black text-slate-900" id="modal-price-container">
                         <span id="modal-price" class="text-brandOrange">R$ 0,00</span>
                     </div>
@@ -438,6 +453,29 @@
         let cart = [];
         let selectedProduct = null;
 
+        // CONTROLE DA BARRA DE PESQUISA DO HEADER
+        const searchBarHeader = document.getElementById('header-search-bar');
+        const headerSearchInput = document.getElementById('header-search-input');
+        const mainSearchInput = document.getElementById('search-input');
+
+        document.getElementById('open-search-bar-btn').onclick = () => {
+            searchBarHeader.classList.toggle('hidden');
+            if(!searchBarHeader.classList.contains('hidden')) {
+                headerSearchInput.focus();
+            }
+        };
+
+        document.getElementById('close-search-bar-btn').onclick = () => {
+            searchBarHeader.classList.add('hidden');
+        };
+
+        headerSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            mainSearchInput.value = query;
+            renderProducts(query);
+            document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
+        });
+
         // ROLAGEM BANNER
         let currentSlide = 0;
         const slides = document.querySelectorAll('.banner-slide');
@@ -493,8 +531,8 @@
             const categoryToFilter = parentSlide ? parentSlide.getAttribute('data-category') : '';
             
             if (categoryToFilter) {
-                const searchInput = document.getElementById('search-input');
-                searchInput.value = categoryToFilter;
+                mainSearchInput.value = categoryToFilter;
+                headerSearchInput.value = categoryToFilter;
                 renderProducts(categoryToFilter);
                 document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
             }
@@ -572,7 +610,8 @@
                 catalogHTML += `
                     <div id="cat-${catName.replace(/\s+/g, '-')}">
                         <h3 class="text-xl font-black text-slate-900 uppercase border-b pb-2 mb-5 border-slate-200">${catName}</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+                        <!-- GRADE DE 2 PRODUTOS NO MOBILE E 4 NO DESKTOP -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
                 `;
                 categoriesMap[catName].forEach((prod) => {
                     const imgs = prod.imagens && Array.isArray(prod.imagens) ? prod.imagens : (prod.imagem ? [prod.imagem] : []);
@@ -582,21 +621,20 @@
                     catalogHTML += `
                         <div onclick="openProductModal('${prod.id}')" class="bg-white rounded-md overflow-hidden shadow-sm border border-slate-200 flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-slate-300 transition transform hover:-translate-y-0.5">
                             <div>
-                                <!-- IMAGEM COM FIT CONTAIN -->
-                                <div class="w-full h-48 bg-slate-100 relative overflow-hidden p-2 flex items-center justify-center">
+                                <div class="w-full h-36 sm:h-48 bg-slate-100 relative overflow-hidden p-2 flex items-center justify-center">
                                     <img src="${mainImg}" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/200?text=Sem+Foto'">
-                                    <span class="absolute top-2 left-2 text-[10px] bg-slate-900/80 text-white font-bold px-2 py-0.5 rounded uppercase">${prod.tag || 'Geral'}</span>
+                                    <span class="absolute top-2 left-2 text-[9px] sm:text-[10px] bg-slate-900/80 text-white font-bold px-1.5 sm:px-2 py-0.5 rounded uppercase">${prod.tag || 'Geral'}</span>
                                 </div>
-                                <div class="p-4">
-                                    <h4 class="font-bold text-sm text-slate-900 line-clamp-1">${prod.nome}</h4>
-                                    <p class="text-slate-500 text-xs mt-1 line-clamp-2">${prod.descricao || ''}</p>
-                                    <div class="mt-3">
-                                        <span class="text-base font-black text-brandOrange">${priceDisplay}</span>
+                                <div class="p-2.5 sm:p-4">
+                                    <h4 class="font-bold text-xs sm:text-sm text-slate-900 line-clamp-1">${prod.nome}</h4>
+                                    <p class="text-slate-500 text-[11px] sm:text-xs mt-1 line-clamp-2">${prod.descricao || ''}</p>
+                                    <div class="mt-2 sm:mt-3">
+                                        <span class="text-sm sm:text-base font-black text-brandOrange">${priceDisplay}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-4 pt-0">
-                                <button class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-2 rounded-md text-xs uppercase shadow-sm transition">Ver Detalhes</button>
+                            <div class="p-2.5 sm:p-4 pt-0">
+                                <button class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-1.5 sm:py-2 rounded-md text-[10px] sm:text-xs uppercase shadow-sm transition">Ver Detalhes</button>
                             </div>
                         </div>
                     `;
@@ -607,11 +645,11 @@
             productsContainer.innerHTML = catalogHTML;
         }
 
-        document.getElementById('search-input').addEventListener('input', (e) => {
+        mainSearchInput.addEventListener('input', (e) => {
+            headerSearchInput.value = e.target.value;
             renderProducts(e.target.value);
         });
 
-        // Função para verificar se existe um ID de produto na URL e abri-lo
         function checkUrlForProduct() {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('produto');
@@ -622,7 +660,7 @@
 
         onValue(ref(db, 'produtos'), (snapshot) => {
             globalProducts = snapshot.val() || {};
-            renderProducts(document.getElementById('search-input').value);
+            renderProducts(mainSearchInput.value);
             checkUrlForProduct();
         });
 
