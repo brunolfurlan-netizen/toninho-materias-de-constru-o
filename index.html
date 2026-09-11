@@ -297,8 +297,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start bg-slate-50 p-6 sm:p-8 rounded-md border border-slate-200 shadow-sm">
                 
                 <div class="space-y-3">
-                    <div class="bg-white rounded-md border border-slate-200 flex items-center justify-center h-64 sm:h-80 overflow-hidden">
-                        <img id="modal-img" src="" alt="Produto" class="w-full h-full object-cover">
+                    <div class="bg-white rounded-md border border-slate-200 flex items-center justify-center h-64 sm:h-80 overflow-hidden p-2">
+                        <img id="modal-img" src="" alt="Produto" class="w-full h-full object-contain">
                     </div>
                     <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-1"></div>
                 </div>
@@ -582,9 +582,9 @@
                     catalogHTML += `
                         <div onclick="openProductModal('${prod.id}')" class="bg-white rounded-md overflow-hidden shadow-sm border border-slate-200 flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-slate-300 transition transform hover:-translate-y-0.5">
                             <div>
-                                <!-- IMAGEM SEM BORDAS/PADDING -->
-                                <div class="w-full h-48 bg-slate-100 relative overflow-hidden">
-                                    <img src="${mainImg}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200?text=Sem+Foto'">
+                                <!-- IMAGEM COM FIT CONTAIN -->
+                                <div class="w-full h-48 bg-slate-100 relative overflow-hidden p-2 flex items-center justify-center">
+                                    <img src="${mainImg}" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/200?text=Sem+Foto'">
                                     <span class="absolute top-2 left-2 text-[10px] bg-slate-900/80 text-white font-bold px-2 py-0.5 rounded uppercase">${prod.tag || 'Geral'}</span>
                                 </div>
                                 <div class="p-4">
@@ -641,8 +641,8 @@
             const thumbsContainer = document.getElementById('modal-thumbnails');
             if (imgs.length > 1) {
                 thumbsContainer.innerHTML = imgs.map((url) => `
-                    <button onclick="changeModalImage('${url}')" class="w-12 h-12 border rounded overflow-hidden flex-shrink-0 hover:border-brandOrange">
-                        <img src="${url}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/50?text=Erro'">
+                    <button onclick="changeModalImage('${url}')" class="w-12 h-12 border rounded overflow-hidden flex-shrink-0 hover:border-brandOrange p-0.5 bg-white">
+                        <img src="${url}" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/50?text=Erro'">
                     </button>
                 `).join('');
             } else {
@@ -730,7 +730,7 @@
                 const pDisplay = formatCurrency(item.preco);
                 return `
                     <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-md border border-slate-200 text-xs shadow-sm">
-                        <img src="${img}" class="w-12 h-12 object-cover rounded bg-white border border-slate-100" onerror="this.src='https://via.placeholder.com/50?text=Sem+Foto'">
+                        <img src="${img}" class="w-12 h-12 object-contain rounded bg-white border border-slate-100 p-0.5" onerror="this.src='https://via.placeholder.com/50?text=Sem+Foto'">
                         <div class="flex-1 truncate">
                             <p class="font-bold text-slate-800 truncate text-xs">${item.nome}</p>
                             <p class="text-brandOrange font-bold text-[11px]">${pDisplay}</p>
