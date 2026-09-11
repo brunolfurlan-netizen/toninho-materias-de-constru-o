@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toninho Materiais de Construção | Sua Obra do Alicerce ao Acabamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#f97316',
+                        brandGreen: '#16a34a',
+                        brandDark: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        #splash-screen {
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .banner-slide {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            inset: 0;
+            transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+        }
+        .banner-slide.active {
+            opacity: 1;
+            visibility: visible;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased relative">
+
+    <!-- MODAL CUSTOMIZADO PARA AVISOS -->
+    <div id="custom-alert-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-md p-6 max-w-sm w-full shadow-xl text-center space-y-4 border border-slate-200">
+            <div class="w-12 h-12 bg-orange-100 text-brandOrange rounded-md flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 id="custom-alert-title" class="text-base font-bold text-slate-900 uppercase">Aviso</h3>
+            <p id="custom-alert-message" class="text-xs text-slate-600 font-medium leading-relaxed"></p>
+            <button id="custom-alert-close-btn" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-2 rounded-md uppercase text-xs tracking-wider transition shadow">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 bg-white z-[90] flex flex-col items-center justify-center p-4">
+        <div class="text-center animate-pulse flex flex-col items-center">
+            <img src="logo.png" alt="Logo Toninho Materiais" class="w-28 h-28 object-contain mb-4" onerror="this.src='https://via.placeholder.com/150?text=Toninho'">
+            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-wider"><span class="text-brandOrange">Toninho Materiais</span></h1>
+            <p class="text-xs text-slate-500 mt-2 font-semibold uppercase">Carregando catálogo completo...</p>
+        </div>
+    </div>
+
+    <!-- BARRA DE AVISO TOPO -->
+    <div class="bg-brandOrange text-white text-xs sm:text-sm py-2 px-4 text-center font-bold uppercase tracking-wide shadow-sm">
+        🏗️ Tudo para sua obra do alicerce ao acabamento! Faça seu orçamento rápido via WhatsApp.
+    </div>
+
+    <!-- CABEÇALHO -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 border-b border-slate-200">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button id="open-sidebar-btn" class="p-2 text-slate-700 hover:text-brandOrange focus:outline-none">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+                <a href="#inicio" class="flex items-center gap-3">
+                    <img src="logo.png" alt="Logo Toninho Materiais" class="h-10 w-10 object-contain rounded" onerror="this.src='https://via.placeholder.com/50?text=Logo'">
+                    <div class="flex flex-col">
+                        <span class="text-lg sm:text-xl font-black text-slate-900 uppercase leading-none">Toninho</span>
+                        <span class="text-xs font-bold text-brandOrange uppercase">Materiais de Construção</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-6 font-semibold text-slate-600 text-sm uppercase">
+                <a href="#inicio" class="hover:text-brandOrange transition">Início</a>
+                <a href="#produtos" class="hover:text-brandOrange transition">Produtos</a>
+                <a href="#localizacao" class="hover:text-brandOrange transition">Localização</a>
+            </nav>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=Av.+Fausto+Pietrobom,+105+-+Jardim+Planalto,+Paul%C3%ADnia+-+SP,+13140-031" target="_blank" class="hidden sm:flex bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-md font-bold items-center gap-2 text-xs uppercase border border-slate-200 transition">
+                    <i class="fa-solid fa-location-dot text-brandOrange"></i>
+                    <span>Como Chegar</span>
+                </a>
+
+                <button id="open-cart-btn" class="relative bg-slate-100 hover:bg-slate-200 p-2.5 rounded-md text-slate-800 transition border border-slate-200">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-brandOrange text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BOTÃO FLUTUANTE DO WHATSAPP -->
+    <a href="https://wa.me/5519997099591?text=Olá,%20gostaria%20de%20fazer%20um%20orçamento!" target="_blank" class="fixed bottom-6 right-6 bg-brandGreen hover:bg-green-600 text-white p-4 rounded-full shadow-2xl z-40 flex items-center justify-center transition-transform hover:scale-110" title="Falar no WhatsApp">
+        <i class="fa-brands fa-whatsapp text-3xl"></i>
+    </a>
+
+    <!-- MENU LATERAL (SIDEBAR) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between border-r border-slate-200">
+        <div class="p-5">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
+                <h3 class="font-bold text-slate-900 uppercase text-sm">Menu Principal</h3>
+                <button id="close-sidebar-btn" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <nav class="space-y-2 font-semibold text-xs uppercase">
+                <a href="#inicio" class="block p-2 rounded hover:bg-slate-100 close-sidebar-link">Início</a>
+                <a href="#produtos" class="block p-2 rounded hover:bg-slate-100 close-sidebar-link">Produtos</a>
+                <a href="#localizacao" class="block p-2 rounded hover:bg-slate-100 close-sidebar-link">Localização</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Av.+Fausto+Pietrobom,+105+-+Jardim+Planalto,+Paul%C3%ADnia+-+SP,+13140-031" target="_blank" class="block p-2 rounded bg-orange-50 text-brandOrange font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot"></i> Como Chegar
+                </a>
+            </nav>
+            <div class="mt-8">
+                <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Categorias</h4>
+                <div id="sidebar-categories" class="space-y-1 text-xs font-medium text-slate-600"></div>
+            </div>
+        </div>
+        <div class="p-4 border-t border-slate-100 bg-slate-50 text-[11px] text-slate-500 text-center">
+            Toninho Materiais © 2026
+        </div>
+    </aside>
+
+    <!-- PAINEL DO CARRINHO LATERAL -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity"></div>
+    <aside id="cart-drawer" class="fixed top-0 right-0 w-80 sm:w-96 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between border-l border-slate-200">
+        <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-bold text-slate-900 uppercase text-sm flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-brandOrange"></i> Meu Carrinho
+            </h3>
+            <button id="close-cart-btn" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <div id="cart-items" class="p-5 flex-1 overflow-y-auto space-y-3">
+            <p class="text-center text-slate-400 text-xs italic">Seu carrinho está vazio.</p>
+        </div>
+
+        <div class="p-5 border-t border-slate-100 bg-slate-50 space-y-3">
+            <div class="flex justify-between text-xs font-bold text-slate-800">
+                <span>Total de Itens:</span>
+                <span id="cart-total-qty">0</span>
+            </div>
+            <div class="flex justify-between text-sm font-black text-slate-900 border-t pt-2 border-slate-200">
+                <span>Valor Estimado:</span>
+                <span id="cart-total-price" class="text-brandOrange">R$ 0,00</span>
+            </div>
+
+            <button id="send-cart-wa-btn" class="w-full bg-brandGreen hover:bg-green-700 text-white font-bold py-3 rounded-md uppercase text-xs tracking-wider flex items-center justify-center gap-2 shadow transition">
+                <i class="fa-brands fa-whatsapp text-base"></i> Enviar Orçamento no WhatsApp
+            </button>
+        </div>
+    </aside>
+
+    <!-- SEÇÃO INÍCIO HERO -->
+    <section id="inicio" class="w-full bg-slate-900 flex items-center justify-center overflow-hidden">
+        <img src="imagemtopo.png" alt="Banner Principal Toninho Materiais" class="w-full h-auto max-w-full object-contain" width="1983" height="783">
+    </section>
+
+    <!-- SEÇÃO PRODUTOS E BANNERS DA LOJA -->
+    <section id="produtos" class="py-12 bg-slate-50">
+        <div class="container mx-auto px-4 space-y-8">
+
+            <!-- BANNERS ROTATIVOS -->
+            <div id="banner-carousel-container" class="relative w-full aspect-[1983/793] max-h-[500px] overflow-hidden rounded-md shadow-sm border border-slate-200 bg-slate-900 group">
+                <div id="carousel-slides" class="relative w-full h-full">
+                    <div class="banner-slide active w-full h-full" data-category="cimentos">
+                        <img src="banner1.png" alt="Promoção 1" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+1'">
+                        <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
+                            <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                                Confira Já <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="banner-slide w-full h-full" data-category="lorenzetti">
+                        <img src="banner2.png" alt="Promoção 2" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+2'">
+                        <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
+                            <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                                Confira Já <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="banner-slide w-full h-full" data-category="lampadas">
+                        <img src="banner3.png" alt="Promoção 3" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/1983x783?text=Banner+3'">
+                        <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 z-10">
+                            <button onclick="filterBannerCategory(this)" class="bg-brandOrange hover:bg-orange-600 text-white font-black text-xs sm:text-sm uppercase py-2.5 px-5 sm:py-3 sm:px-6 rounded-md shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                                Confira Já <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="prev-banner-btn" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-9 h-9 rounded-full flex items-center justify-center transition z-20">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <button id="next-banner-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-9 h-9 rounded-full flex items-center justify-center transition z-20">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                    <span class="banner-dot w-2.5 h-2.5 rounded-full bg-white opacity-100 cursor-pointer transition-all"></span>
+                    <span class="banner-dot w-2.5 h-2.5 rounded-full bg-white opacity-50 cursor-pointer transition-all"></span>
+                    <span class="banner-dot w-2.5 h-2.5 rounded-full bg-white opacity-50 cursor-pointer transition-all"></span>
+                </div>
+            </div>
+
+            <!-- TÍTULO E CAMPO DE PESQUISA -->
+            <div class="max-w-2xl mx-auto text-center space-y-4 pt-4">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 uppercase">Nosso Catálogo</h2>
+                    <p class="text-slate-500 text-xs mt-1">Busque itens ou navegue pelas categorias abaixo</p>
+                </div>
+                
+                <div class="relative w-full shadow-sm">
+                    <input type="text" id="search-input" placeholder="Buscar produtos, materiais, ferramentas..." class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-md text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                </div>
+            </div>
+
+            <div id="firebase-products-container" class="space-y-12">
+                <p class="text-center text-slate-500 text-xs">Carregando catálogo...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO LOCALIZAÇÃO & CONTATO -->
+    <section id="localizacao" class="py-14 bg-white border-t border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 uppercase">Onde Estamos</h2>
+                <p class="text-slate-500 text-xs mt-1">Venha nos fazer uma visita ou peça seu orçamento online</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center max-w-4xl mx-auto">
+                <div class="bg-slate-50 p-6 rounded-md border border-slate-200 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-location-dot text-xl text-brandOrange mt-0.5"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-900 uppercase text-xs">Endereço</h4>
+                            <p class="text-slate-600 text-xs mt-0.5">Av. Fausto Pietrobom, 105 - Jardim Planalto</p>
+                            <p class="text-slate-600 text-xs">Paulínia - SP, 13140-031</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fa-brands fa-whatsapp text-xl text-brandGreen mt-0.5"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-900 uppercase text-xs">WhatsApp</h4>
+                            <p class="text-slate-600 text-xs mt-0.5">(19) 99709-9591</p>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <a href="https://www.google.com/maps/search/?api=1&query=Av.+Fausto+Pietrobom,+105+-+Jardim+Planalto,+Paul%C3%ADnia+-+SP,+13140-031" target="_blank" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-2.5 rounded-md uppercase text-xs flex items-center justify-center gap-2 transition shadow-sm">
+                            <i class="fa-solid fa-map-location-dot"></i> Abrir no Google Maps
+                        </a>
+                    </div>
+                </div>
+                <div class="h-64 rounded-md overflow-hidden border border-slate-200 shadow-sm">
+                    <iframe class="w-full h-full border-0" src="https://maps.google.com/maps?q=Av.%20Fausto%20Pietrobom,%20105%20-%20Jardim%20Planalto,%20Paul%C3%ADnia%20-%20SP,%2013140-031&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL DO PRODUTO -->
+    <div id="product-modal" class="fixed inset-0 bg-white z-50 hidden flex flex-col overflow-y-auto">
+        <div class="bg-slate-900 text-white p-4 sticky top-0 z-10 flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Logo" class="h-7 w-7 object-contain rounded" onerror="this.src='https://via.placeholder.com/40'">
+                <span class="font-black uppercase text-xs sm:text-sm">Toninho <span class="text-brandOrange">Materiais</span></span>
+            </div>
+            <button id="close-modal-btn" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-2 transition">
+                <i class="fa-solid fa-arrow-left"></i> Voltar ao site
+            </button>
+        </div>
+
+        <div class="container mx-auto px-4 py-8 flex-1 max-w-4xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start bg-slate-50 p-6 sm:p-8 rounded-md border border-slate-200 shadow-sm">
+                
+                <div class="space-y-3">
+                    <div class="bg-white rounded-md border border-slate-200 flex items-center justify-center h-64 sm:h-80 overflow-hidden">
+                        <img id="modal-img" src="" alt="Produto" class="w-full h-full object-cover">
+                    </div>
+                    <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-1"></div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span id="modal-tag" class="inline-block text-[10px] bg-orange-100 text-brandOrange font-bold px-2.5 py-0.5 rounded uppercase"></span>
+                        <button id="modal-copy-link-btn" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2.5 py-1 rounded flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-link"></i> Copiar Link
+                        </button>
+                    </div>
+
+                    <h1 id="modal-title" class="text-2xl font-black text-slate-900 uppercase"></h1>
+                    <p id="modal-category" class="text-xs font-bold text-brandOrange uppercase"></p>
+                    
+                    <!-- EXIBIÇÃO DE PREÇO -->
+                    <div class="text-2xl font-black text-slate-900" id="modal-price-container">
+                        <span id="modal-price" class="text-brandOrange">R$ 0,00</span>
+                    </div>
+
+                    <p id="modal-type" class="text-[11px] text-slate-500 font-semibold uppercase"></p>
+
+                    <div class="bg-white p-3 rounded-md border border-slate-200 space-y-2 text-xs">
+                        <div class="flex items-center gap-2 text-slate-700 font-semibold">
+                            <i class="fa-solid fa-credit-card text-brandOrange"></i>
+                            <span><strong>Pagamento:</strong> Pix, Cartão de Crédito/Débito e Dinheiro</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-700 font-semibold">
+                            <i class="fa-solid fa-truck text-brandGreen"></i>
+                            <span><strong>Envio:</strong> Entrega Rápida em Paulínia e Região ou Retirada</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="border-slate-200">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Quantidade desejada:</label>
+                        <div class="flex items-center gap-2">
+                            <button id="modal-qty-minus" class="w-9 h-9 bg-slate-200 hover:bg-slate-300 font-bold rounded-md text-base text-slate-700">-</button>
+                            <input type="number" id="modal-qty" value="1" min="1" class="w-16 text-center border border-slate-300 rounded-md py-1.5 text-sm font-bold outline-none">
+                            <button id="modal-qty-plus" class="w-9 h-9 bg-slate-200 hover:bg-slate-300 font-bold rounded-md text-base text-slate-700">+</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <button id="modal-add-cart-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-md uppercase text-xs transition shadow flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-sm"></i> Adicionar ao Carrinho
+                        </button>
+                        <a id="modal-wa-btn" href="#" target="_blank" class="flex-1 bg-brandGreen hover:bg-green-700 text-white font-bold py-3 rounded-md uppercase text-xs text-center transition shadow flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-base"></i> Orçar Agora
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-white p-6 rounded-md border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-900 uppercase text-sm mb-2">Descrição Detalhada</h3>
+                <p id="modal-desc" class="text-slate-600 text-xs leading-relaxed whitespace-pre-line"></p>
+            </div>
+        </div>
+
+        <footer class="bg-slate-950 text-white p-4 text-[11px] text-center border-t border-slate-800 mt-auto">
+            <p class="font-bold uppercase tracking-wider">Toninho Materiais de Construção</p>
+            <p class="text-slate-400 mt-0.5">Av. Fausto Pietrobom, 105 - Jardim Planalto, Paulínia - SP</p>
+        </footer>
+    </div>
+
+    <!-- RODAPÉ PRINCIPAL -->
+    <footer class="bg-slate-950 text-white py-10 border-t border-slate-800">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="logo.png" alt="Logo" class="h-8 w-8 object-contain rounded" onerror="this.src='https://via.placeholder.com/40'">
+                    <span class="text-base font-black uppercase">Toninho <span class="text-brandOrange">Materiais</span></span>
+                </div>
+                <p class="text-slate-400 text-xs leading-relaxed">Sua parceira de confiança para materiais de construção em Paulínia e região. Do alicerce ao acabamento com excelência.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-white uppercase text-xs mb-3 border-b border-slate-800 pb-2">Links Rápidos</h4>
+                <ul class="space-y-1.5 text-xs text-slate-400 uppercase font-semibold">
+                    <li><a href="#inicio" class="hover:text-brandOrange transition">Início</a></li>
+                    <li><a href="#produtos" class="hover:text-brandOrange transition">Produtos</a></li>
+                    <li><a href="#localizacao" class="hover:text-brandOrange transition">Localização</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white uppercase text-xs mb-3 border-b border-slate-800 pb-2">Contato</h4>
+                <p class="text-xs text-slate-400 mb-2"><i class="fa-solid fa-location-dot text-brandOrange mr-2"></i> Av. Fausto Pietrobom, 105 - Paulínia/SP</p>
+                <p class="text-xs text-slate-400"><i class="fa-brands fa-whatsapp text-brandGreen mr-2"></i> (19) 99709-9591</p>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-8 pt-6 border-t border-slate-900 text-center text-[11px] text-slate-500">
+            Toninho Materiais de Construção © 2026 - Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <!-- SCRIPT FIREBASE & LÓGICA DA LOJA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        function showAlert(msg, title = "Aviso") {
+            const modal = document.getElementById('custom-alert-modal');
+            document.getElementById('custom-alert-title').innerText = title;
+            document.getElementById('custom-alert-message').innerText = msg;
+            modal.classList.remove('hidden');
+        }
+
+        document.getElementById('custom-alert-close-btn').onclick = () => {
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.classList.add('splash-hidden');
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 2300);
+        });
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqojwhjGUNoFQXRJG0GFBgInQMXKRMY3o",
+            authDomain: "toninho-materiais.firebaseapp.com",
+            databaseURL: "https://toninho-materiais-default-rtdb.firebaseio.com",
+            projectId: "toninho-materiais",
+            storageBucket: "toninho-materiais.firebasestorage.app",
+            messagingSenderId: "119299501696",
+            appId: "1:119299501696:web:f7ec310f2afec6b5710065"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let globalProducts = {};
+        let cart = [];
+        let selectedProduct = null;
+
+        // ROLAGEM BANNER
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.banner-slide');
+        const dots = document.querySelectorAll('.banner-dot');
+        let bannerTimer = null;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            dots.forEach((dot, i) => {
+                dot.style.opacity = (i === index) ? '1' : '0.5';
+                dot.style.transform = (i === index) ? 'scale(1.2)' : 'scale(1)';
+            });
+            currentSlide = index;
+        }
+
+        function startBannerTimer() {
+            stopBannerTimer();
+            bannerTimer = setInterval(() => {
+                let index = (currentSlide + 1) % slides.length;
+                showSlide(index);
+            }, 4000);
+        }
+
+        function stopBannerTimer() {
+            if (bannerTimer) clearInterval(bannerTimer);
+        }
+
+        document.getElementById('prev-banner-btn').onclick = () => {
+            let index = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(index);
+            startBannerTimer();
+        };
+
+        document.getElementById('next-banner-btn').onclick = () => {
+            let index = (currentSlide + 1) % slides.length;
+            showSlide(index);
+            startBannerTimer();
+        };
+
+        dots.forEach((dot, i) => {
+            dot.onclick = () => {
+                showSlide(i);
+                startBannerTimer();
+            };
+        });
+
+        startBannerTimer();
+
+        window.filterBannerCategory = (btnElement) => {
+            const parentSlide = btnElement.closest('.banner-slide');
+            const categoryToFilter = parentSlide ? parentSlide.getAttribute('data-category') : '';
+            
+            if (categoryToFilter) {
+                const searchInput = document.getElementById('search-input');
+                searchInput.value = categoryToFilter;
+                renderProducts(categoryToFilter);
+                document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        // UI Modals
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const productModal = document.getElementById('product-modal');
+
+        document.getElementById('open-sidebar-btn').onclick = () => { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); };
+        document.getElementById('close-sidebar-btn').onclick = closeSidebar;
+        sidebarOverlay.onclick = closeSidebar;
+        function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
+
+        document.getElementById('open-cart-btn').onclick = () => { cartDrawer.classList.remove('translate-x-full'); cartOverlay.classList.remove('hidden'); };
+        document.getElementById('close-cart-btn').onclick = closeCart;
+        cartOverlay.onclick = closeCart;
+        function closeCart() { cartDrawer.classList.add('translate-x-full'); cartOverlay.classList.add('hidden'); }
+
+        document.getElementById('close-modal-btn').onclick = () => {
+            productModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        function formatCurrency(value) {
+            const num = parseFloat(value);
+            if (isNaN(num) || num <= 0) return 'Sob Consulta';
+            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // RENDERIZAR CATÁLOGO DE PRODUTOS
+        function renderProducts(filterTerm = '') {
+            const productsContainer = document.getElementById('firebase-products-container');
+            const sidebarCategories = document.getElementById('sidebar-categories');
+
+            if (!globalProducts || Object.keys(globalProducts).length === 0) {
+                productsContainer.innerHTML = `<p class="text-center text-slate-500 text-xs">Nenhum produto cadastrado no momento.</p>`;
+                return;
+            }
+
+            const categoriesMap = {};
+            const term = filterTerm.toLowerCase().trim();
+
+            Object.keys(globalProducts).forEach((key) => {
+                const item = globalProducts[key];
+                item.id = key;
+                const cat = item.categoria || 'Outros';
+
+                const matchesName = item.nome && item.nome.toLowerCase().includes(term);
+                const matchesCategory = item.categoria && item.categoria.toLowerCase().includes(term);
+                const matchesDesc = item.descricao && item.descricao.toLowerCase().includes(term);
+
+                if (!term || matchesName || matchesCategory || matchesDesc) {
+                    if (!categoriesMap[cat]) categoriesMap[cat] = [];
+                    categoriesMap[cat].push(item);
+                }
+            });
+
+            if (Object.keys(categoriesMap).length === 0) {
+                productsContainer.innerHTML = `<p class="text-center text-slate-500 text-xs py-8">Nenhum produto encontrado para "${filterTerm}".</p>`;
+                return;
+            }
+
+            sidebarCategories.innerHTML = Object.keys(categoriesMap).map(cat => 
+                `<a href="#cat-${cat.replace(/\s+/g, '-')}" class="block py-1 hover:text-brandOrange close-sidebar-link">${cat}</a>`
+            ).join('');
+
+            document.querySelectorAll('.close-sidebar-link').forEach(el => el.onclick = closeSidebar);
+
+            let catalogHTML = '';
+            Object.keys(categoriesMap).forEach((catName) => {
+                catalogHTML += `
+                    <div id="cat-${catName.replace(/\s+/g, '-')}">
+                        <h3 class="text-xl font-black text-slate-900 uppercase border-b pb-2 mb-5 border-slate-200">${catName}</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+                `;
+                categoriesMap[catName].forEach((prod) => {
+                    const imgs = prod.imagens && Array.isArray(prod.imagens) ? prod.imagens : (prod.imagem ? [prod.imagem] : []);
+                    const mainImg = imgs[0] || 'https://via.placeholder.com/200?text=Sem+Foto';
+                    const priceDisplay = formatCurrency(prod.preco);
+
+                    catalogHTML += `
+                        <div onclick="openProductModal('${prod.id}')" class="bg-white rounded-md overflow-hidden shadow-sm border border-slate-200 flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-slate-300 transition transform hover:-translate-y-0.5">
+                            <div>
+                                <!-- IMAGEM SEM BORDAS/PADDING -->
+                                <div class="w-full h-48 bg-slate-100 relative overflow-hidden">
+                                    <img src="${mainImg}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200?text=Sem+Foto'">
+                                    <span class="absolute top-2 left-2 text-[10px] bg-slate-900/80 text-white font-bold px-2 py-0.5 rounded uppercase">${prod.tag || 'Geral'}</span>
+                                </div>
+                                <div class="p-4">
+                                    <h4 class="font-bold text-sm text-slate-900 line-clamp-1">${prod.nome}</h4>
+                                    <p class="text-slate-500 text-xs mt-1 line-clamp-2">${prod.descricao || ''}</p>
+                                    <div class="mt-3">
+                                        <span class="text-base font-black text-brandOrange">${priceDisplay}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 pt-0">
+                                <button class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-2 rounded-md text-xs uppercase shadow-sm transition">Ver Detalhes</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                catalogHTML += `</div></div>`;
+            });
+
+            productsContainer.innerHTML = catalogHTML;
+        }
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            renderProducts(e.target.value);
+        });
+
+        // Função para verificar se existe um ID de produto na URL e abri-lo
+        function checkUrlForProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('produto');
+            if (productId && globalProducts[productId]) {
+                openProductModal(productId);
+            }
+        }
+
+        onValue(ref(db, 'produtos'), (snapshot) => {
+            globalProducts = snapshot.val() || {};
+            renderProducts(document.getElementById('search-input').value);
+            checkUrlForProduct();
+        });
+
+        // MODAL DO PRODUTO
+        window.openProductModal = (id) => {
+            selectedProduct = globalProducts[id];
+            if (!selectedProduct) return;
+
+            const imgs = selectedProduct.imagens && Array.isArray(selectedProduct.imagens) && selectedProduct.imagens.length > 0
+                ? selectedProduct.imagens 
+                : (selectedProduct.imagem ? [selectedProduct.imagem] : ['https://via.placeholder.com/300?text=Sem+Foto']);
+
+            const mainImg = document.getElementById('modal-img');
+            mainImg.src = imgs[0];
+
+            const thumbsContainer = document.getElementById('modal-thumbnails');
+            if (imgs.length > 1) {
+                thumbsContainer.innerHTML = imgs.map((url) => `
+                    <button onclick="changeModalImage('${url}')" class="w-12 h-12 border rounded overflow-hidden flex-shrink-0 hover:border-brandOrange">
+                        <img src="${url}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/50?text=Erro'">
+                    </button>
+                `).join('');
+            } else {
+                thumbsContainer.innerHTML = '';
+            }
+
+            document.getElementById('modal-tag').innerText = selectedProduct.tag || 'Geral';
+            document.getElementById('modal-title').innerText = selectedProduct.nome;
+            document.getElementById('modal-category').innerText = selectedProduct.categoria || '';
+            document.getElementById('modal-price').innerText = formatCurrency(selectedProduct.preco);
+            document.getElementById('modal-type').innerText = selectedProduct.tipo ? `Tipo: ${selectedProduct.tipo}` : '';
+            document.getElementById('modal-desc').innerText = selectedProduct.descricao || 'Sem descrição cadastrada.';
+            document.getElementById('modal-qty').value = 1;
+
+            const waMsg = encodeURIComponent(`Olá, gostaria de orçar o produto: ${selectedProduct.nome} (${formatCurrency(selectedProduct.preco)})`);
+            document.getElementById('modal-wa-btn').href = `https://wa.me/5519997099591?text=${waMsg}`;
+
+            productModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.changeModalImage = (url) => {
+            document.getElementById('modal-img').src = url;
+        };
+
+        document.getElementById('modal-copy-link-btn').onclick = () => {
+            if (!selectedProduct) return;
+            const productUrl = `${window.location.origin}${window.location.pathname}?produto=${selectedProduct.id}`;
+            navigator.clipboard.writeText(productUrl).then(() => showAlert('Link copiado!', 'Sucesso'));
+        };
+
+        document.getElementById('modal-qty-minus').onclick = () => {
+            const input = document.getElementById('modal-qty');
+            if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+        };
+        document.getElementById('modal-qty-plus').onclick = () => {
+            const input = document.getElementById('modal-qty');
+            input.value = parseInt(input.value) + 1;
+        };
+
+        document.getElementById('modal-add-cart-btn').onclick = () => {
+            const qty = parseInt(document.getElementById('modal-qty').value);
+            const existing = cart.find(item => item.id === selectedProduct.id);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({ ...selectedProduct, qty });
+            }
+            updateCart();
+            productModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            cartDrawer.classList.remove('translate-x-full');
+            cartOverlay.classList.remove('hidden');
+        };
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartTotalQty = document.getElementById('cart-total-qty');
+            const cartTotalPrice = document.getElementById('cart-total-price');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            const totalPrice = cart.reduce((acc, item) => {
+                const val = parseFloat(item.preco) || 0;
+                return acc + (val * item.qty);
+            }, 0);
+
+            cartTotalQty.innerText = totalItems;
+            cartTotalPrice.innerText = totalPrice > 0 ? totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Sob Consulta';
+
+            if (totalItems > 0) {
+                cartBadge.innerText = totalItems;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = `<p class="text-center text-slate-400 text-xs italic">Seu carrinho está vazio.</p>`;
+                return;
+            }
+
+            cartItems.innerHTML = cart.map((item, index) => {
+                const img = (item.imagens && item.imagens[0]) || item.imagem || 'https://via.placeholder.com/50?text=Sem+Foto';
+                const pDisplay = formatCurrency(item.preco);
+                return `
+                    <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-md border border-slate-200 text-xs shadow-sm">
+                        <img src="${img}" class="w-12 h-12 object-cover rounded bg-white border border-slate-100" onerror="this.src='https://via.placeholder.com/50?text=Sem+Foto'">
+                        <div class="flex-1 truncate">
+                            <p class="font-bold text-slate-800 truncate text-xs">${item.nome}</p>
+                            <p class="text-brandOrange font-bold text-[11px]">${pDisplay}</p>
+                            <p class="text-slate-500 font-semibold text-[10px]">Qtd: ${item.qty}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-50 transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.removeFromCart = (index) => {
+            cart.splice(index, 1);
+            updateCart();
+        };
+
+        document.getElementById('send-cart-wa-btn').onclick = () => {
+            if (cart.length === 0) {
+                showAlert('Seu carrinho está vazio!');
+                return;
+            }
+            let text = 'Olá, gostaria de fazer um orçamento para os seguintes itens:\n\n';
+            cart.forEach(item => {
+                const price = formatCurrency(item.preco);
+                text += `• ${item.nome} - Qtd: ${item.qty} (Preço un: ${price})\n`;
+            });
+            window.open(`https://wa.me/5519997099591?text=${encodeURIComponent(text)}`, '_blank');
+        };
+    </script>
+</body>
+</html>
