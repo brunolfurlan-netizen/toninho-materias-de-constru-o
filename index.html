@@ -170,7 +170,10 @@
 
     <!-- SEÇÃO INÍCIO HERO -->
     <section id="inicio" class="w-full bg-slate-900 flex items-center justify-center overflow-hidden">
-        <img src="imagemtopo.png" alt="Banner Principal Toninho Materiais" class="w-full h-auto max-w-full object-contain" width="1983" height="783">
+        <!-- Imagem para Desktop/PC (visível a partir de telas sm) -->
+        <img src="imagemtopo.png" alt="Banner Principal Toninho Materiais" class="hidden sm:block w-full h-auto max-w-full object-contain" width="1983" height="783">
+        <!-- Imagem para Mobile/Celular (visível apenas em telas menores) -->
+        <img src="imagemtopo2.png" alt="Banner Principal Toninho Materiais Mobile" class="block sm:hidden w-full h-auto max-w-full object-contain">
     </section>
 
     <!-- SEÇÃO PRODUTOS E BANNERS DA LOJA -->
