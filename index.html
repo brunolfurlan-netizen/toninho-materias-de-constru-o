@@ -989,12 +989,25 @@
             renderProducts(e.target.value);
         });
 
-        // CARREGAR PRODUTOS DO FIREBASE
+        // Função para verificar se existe um ID de produto na URL e abri-lo automaticamente
+        function checkUrlProductParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('prod');
+            
+            if (productId && globalProducts[productId]) {
+                openProductModal(productId);
+            }
+        }
+
+        // CARREGAR PRODUTOS DO FIREBASE E VERIFICAR URL
         const productsRef = ref(db, 'produtos');
         onValue(productsRef, (snapshot) => {
             globalProducts = snapshot.val() || {};
             renderProducts();
             renderSidebarCategories();
+            
+            // Executa a verificação para abrir o produto do link copiado
+            checkUrlProductParam();
         });
 
         function renderSidebarCategories() {
@@ -1147,9 +1160,16 @@
         };
 
         document.getElementById('modal-copy-link-btn').onclick = () => {
-            navigator.clipboard.writeText(window.location.href);
-            showAlert('Link copiado para a área de transferência!', 'Sucesso');
-        };
+    if (!selectedProduct) return;
+    
+    // Constrói o link direto incluindo o ID do produto na URL
+    const baseUrl = window.location.origin + window.location.pathname;
+    const productUrl = `${baseUrl}?prod=${selectedProduct.id}`;
+    
+    // Copia o link formatado para a área de transferência
+    navigator.clipboard.writeText(productUrl);
+    showAlert('Link do produto copiado para a área de transferência!', 'Sucesso');
+};
 
         // --- CARRINHO DE COMPRAS ---
         document.getElementById('modal-add-cart-btn').onclick = () => {
