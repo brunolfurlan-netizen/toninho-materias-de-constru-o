@@ -245,12 +245,42 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">CEP *</label>
-                        <input type="text" id="dev-cep" required placeholder="13140-000" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                        <input type="text" id="dev-cep" maxlength="9" required placeholder="13140-000" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Endereço Completo *</label>
-                    <input type="text" id="dev-address" required placeholder="Rua, Número, Bairro, Cidade" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+
+                <!-- Campos detalhados do Endereço -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Logradouro/Rua *</label>
+                        <input type="text" id="dev-street" required placeholder="Ex: Av. Fausto Pietrobom" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Número *</label>
+                        <input type="text" id="dev-number" required placeholder="105" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-bold focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Bairro *</label>
+                        <input type="text" id="dev-neighborhood" required placeholder="Jardim Planalto" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Bloco / Apto / Compl.</label>
+                        <input type="text" id="dev-complement" placeholder="Apto 12, Bloco B" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Cidade *</label>
+                        <input type="text" id="dev-city" required placeholder="Paulínia" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">UF *</label>
+                        <input type="text" id="dev-uf" required maxlength="2" placeholder="SP" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-xs font-medium uppercase focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                    </div>
                 </div>
 
                 <button type="submit" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-3 rounded-md uppercase text-xs tracking-wider transition shadow mt-2">
@@ -1340,6 +1370,18 @@
         document.getElementById('delivery-form').onsubmit = (e) => {
             e.preventDefault();
 
+            // Pega os valores dos novos campos
+            const street = document.getElementById('dev-street').value.trim();
+            const number = document.getElementById('dev-number').value.trim();
+            const complement = document.getElementById('dev-complement').value.trim();
+            const neighborhood = document.getElementById('dev-neighborhood').value.trim();
+            const city = document.getElementById('dev-city').value.trim();
+            const uf = document.getElementById('dev-uf').value.trim();
+            const cep = document.getElementById('dev-cep').value.trim();
+
+            // Monta o endereço formatado em texto único para facilidade de exibição
+            const fullAddress = `${street}, Nº ${number}${complement ? ' (' + complement + ')' : ''} - ${neighborhood}, ${city}/${uf} - CEP: ${cep}`;
+
             checkoutData = {
                 tipo: 'Entrega',
                 cliente: {
@@ -1347,8 +1389,14 @@
                     email: document.getElementById('dev-email').value.trim(),
                     telefone: document.getElementById('dev-phone').value.trim(),
                     cpf: document.getElementById('dev-cpf').value.trim(),
-                    cep: document.getElementById('dev-cep').value.trim(),
-                    endereco: document.getElementById('dev-address').value.trim()
+                    cep: cep,
+                    rua: street,
+                    numero: number,
+                    complemento: complement,
+                    bairro: neighborhood,
+                    cidade: city,
+                    uf: uf,
+                    endereco: fullAddress
                 }
             };
 
