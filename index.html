@@ -174,36 +174,6 @@
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Horário de Retirada *</label>
-                        <select id="pickup-time" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
-                            <option value="">Selecione um horário</option>
-                            <optgroup label="Segunda a Sexta (08:00 às 18:00)">
-                                <option value="Seg-Sex: 08:00">08:00</option>
-                                <option value="Seg-Sex: 09:00">09:00</option>
-                                <option value="Seg-Sex: 10:00">10:00</option>
-                                <option value="Seg-Sex: 11:00">11:00</option>
-                                <option value="Seg-Sex: 12:00">12:00</option>
-                                <option value="Seg-Sex: 13:00">13:00</option>
-                                <option value="Seg-Sex: 14:00">14:00</option>
-                                <option value="Seg-Sex: 15:00">15:00</option>
-                                <option value="Seg-Sex: 16:00">16:00</option>
-                                <option value="Seg-Sex: 17:00">17:00</option>
-                                <option value="Seg-Sex: 18:00">18:00</option>
-                            </optgroup>
-                            <optgroup label="Sábado (08:00 às 13:00)">
-                                <option value="Sábado: 08:00">Sábado - 08:00</option>
-                                <option value="Sábado: 09:00">Sábado - 09:00</option>
-                                <option value="Sábado: 10:00">Sábado - 10:00</option>
-                                <option value="Sábado: 11:00">Sábado - 11:00</option>
-                                <option value="Sábado: 12:00">Sábado - 12:00</option>
-                                <option value="Sábado: 13:00">Sábado - 13:00</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-
                 <button type="submit" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-3 rounded-md uppercase text-xs tracking-wider transition shadow">
                     Prosseguir para Pagamento
                 </button>
@@ -240,8 +210,8 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">CPF *</label>
-                        <input type="text" id="dev-cpf" required placeholder="000.000.000-00" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
+                       <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">CPF (Opcional)</label>
+                       <input type="text" id="dev-cpf" placeholder="000.000.000-00" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs font-medium focus:outline-none focus:ring-1 focus:ring-brandOrange">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">CEP *</label>
@@ -334,12 +304,12 @@
             <!-- Área QR Code e CNPJ -->
             <div class="text-center space-y-3 bg-emerald-50/50 p-4 rounded-md border border-emerald-100">
                 <p class="text-xs font-bold text-slate-700 uppercase">Escaneie o QR Code abaixo:</p>
-                <img src="qrcode.jpg" alt="QR Code Pix" class="w-44 h-44 object-contain mx-auto rounded border border-slate-300 shadow-sm" onerror="this.src='https://via.placeholder.com/200?text=QR+Code+Pix'">
+                <img src="qrcode.jpeg" alt="QR Code Pix" class="w-44 h-44 object-contain mx-auto rounded border border-slate-300 shadow-sm" onerror="this.src='https://via.placeholder.com/200?text=QR+Code+Pix'">
                 
                 <div>
                     <p class="text-[11px] font-bold text-slate-600 uppercase mb-1">Chave Pix / CNPJ:</p>
                     <div class="flex items-center justify-center gap-2">
-                        <input type="text" id="pix-cnpj-key" value="12.345.678/0001-90" readonly class="bg-white border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800 text-center w-48">
+                        <input type="text" id="pix-cnpj-key" value="56.210.727/0001-58" readonly class="bg-white border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800 text-center w-48">
                         <button id="copy-pix-btn" class="bg-brandOrange hover:bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded transition">
                             Copiar
                         </button>
@@ -389,8 +359,8 @@
                 <a href="#inicio" class="flex items-center gap-3">
                     <img src="logo.png" alt="Logo Toninho Materiais" class="h-10 w-10 object-contain rounded" onerror="this.src='https://via.placeholder.com/50?text=Logo'">
                     <div class="flex flex-col">
-                        <span class="text-lg sm:text-xl font-black text-slate-900 uppercase leading-none">Toninho</span>
-                        <span class="text-xs font-bold text-brandOrange uppercase">Materiais de Construção</span>
+                        <span class="text-lg sm:text-xl font-black text-slate-900 uppercase leading-none"></span>
+                        <span class="text-xs font-bold text-brandOrange uppercase"></span>
                     </div>
                 </a>
             </div>
@@ -674,11 +644,12 @@
                     
                     <div>
 
-<!-- SELETOR DE VARIAÇÃO NO MODAL -->
-<div id="modal-variations-wrapper" class="hidden space-y-1.5">
-    <label class="block text-xs font-bold text-slate-700 uppercase">Selecione a Opção / Variação:</label>
-    <div id="modal-variations-options" class="flex flex-wrap gap-2"></div>
-</div>
+                        <!-- SELETOR DE VARIAÇÃO NO MODAL -->
+                        <div id="modal-variations-wrapper" class="hidden space-y-1.5 mb-3">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Selecione a Opção / Variação:</label>
+                            <div id="modal-variations-options" class="flex flex-wrap gap-2"></div>
+                        </div>
+
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Quantidade desejada:</label>
                         <div class="flex items-center gap-2">
                             <button id="modal-qty-minus" class="w-9 h-9 bg-slate-200 hover:bg-slate-300 font-bold rounded-md text-base text-slate-700">-</button>
@@ -793,11 +764,12 @@
         let globalProducts = {};
         let cart = [];
         let selectedProduct = null;
+        let selectedVariation = null;
         let checkoutData = { tipo: '', cliente: {} };
         let currentUser = null;
         let isSignUpMode = false;
 
-        // AUTH CONTROL & EXIBIÇÃO DA FOTO DO PERFIL DO GOOGLE
+        // AUTH CONTROL
         const authModal = document.getElementById('auth-modal');
         const userAuthBtn = document.getElementById('user-auth-btn');
         const userAuthLabel = document.getElementById('user-auth-label');
@@ -811,7 +783,6 @@
             if (user) {
                 userAuthLabel.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
                 
-                // Exibir Foto do Perfil se Logado via Google / Possuir PhotoURL
                 if (user.photoURL) {
                     userAvatarImg.src = user.photoURL;
                     userAvatarImg.classList.remove('hidden');
@@ -821,11 +792,9 @@
                     userAvatarIcon.classList.remove('hidden');
                 }
 
-                // Mostrar abas de "Meus Pedidos" quando logado
                 navMyOrdersBtn.classList.remove('hidden');
                 sidebarMyOrdersBtn.classList.remove('hidden');
 
-                // Preencher e-mail/nome padrão se houver formulário de checkout
                 document.getElementById('dev-email').value = user.email || '';
                 document.getElementById('dev-name').value = user.displayName || '';
                 document.getElementById('pickup-name').value = user.displayName || '';
@@ -834,7 +803,6 @@
                 userAvatarImg.classList.add('hidden');
                 userAvatarIcon.classList.remove('hidden');
 
-                // Ocultar abas de "Meus Pedidos" quando deslogado
                 navMyOrdersBtn.classList.add('hidden');
                 sidebarMyOrdersBtn.classList.add('hidden');
             }
@@ -1019,7 +987,6 @@
             renderProducts(e.target.value);
         });
 
-        // Função para verificar se existe um ID de produto na URL e abri-lo automaticamente
         function checkUrlProductParam() {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('prod');
@@ -1035,8 +1002,6 @@
             globalProducts = snapshot.val() || {};
             renderProducts();
             renderSidebarCategories();
-            
-            // Executa a verificação para abrir o produto do link copiado
             checkUrlProductParam();
         });
 
@@ -1143,7 +1108,7 @@
             container.innerHTML = html;
         }
 
-        // --- DETALHES DO PRODUTO (MODAL) ---
+        // --- DETALHES DO PRODUTO (MODAL MODIFICADO COM SUPORTE ATÉ 5 FOTOS) ---
         const productModal = document.getElementById('product-modal');
         
         window.openProductModal = (id) => {
@@ -1151,6 +1116,8 @@
             if (!prod) return;
 
             selectedProduct = { ...prod, id };
+            selectedVariation = null;
+
             document.getElementById('modal-title').innerText = prod.nome;
             document.getElementById('modal-category').innerText = prod.categoria || 'Geral';
             document.getElementById('modal-type').innerText = `Tipo: ${prod.tipo || 'Padrão'}`;
@@ -1158,22 +1125,94 @@
             document.getElementById('modal-desc').innerText = prod.descricao || 'Sem descrição detalhada.';
             document.getElementById('modal-qty').value = 1;
 
-            const priceVal = prod.preco ? parseFloat(prod.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Consulte Preço';
-            document.getElementById('modal-price').innerText = priceVal;
+            // Tratamento das Variações de Preço
+            const variationsWrapper = document.getElementById('modal-variations-wrapper');
+            const variationsOptions = document.getElementById('modal-variations-options');
 
-            const imgs = (prod.imagens && prod.imagens.length > 0) ? prod.imagens : [prod.imagem || 'https://via.placeholder.com/400?text=Sem+Foto'];
-            document.getElementById('modal-img').src = imgs[0];
+            if (prod.variacoes && prod.variacoes.length > 0) {
+                variationsWrapper.classList.remove('hidden');
+                selectedVariation = prod.variacoes[0];
+                
+                variationsOptions.innerHTML = prod.variacoes.map((v, idx) => `
+                    <button type="button" onclick="selectVariationOption(${idx})" id="var-btn-${idx}" class="variation-btn text-xs font-bold px-3 py-1.5 rounded border ${idx === 0 ? 'bg-brandOrange text-white border-brandOrange' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'} transition">
+                        ${v.nome}
+                    </button>
+                `).join('');
+            } else {
+                variationsWrapper.classList.add('hidden');
+            }
 
+            updateModalPriceDisplay();
+
+            // TRATAMENTO DA GALERIA DE FOTOS (ATÉ 5 IMAGENS)
+            let imgs = [];
+            if (Array.isArray(prod.imagens) && prod.imagens.length > 0) {
+                imgs = prod.imagens.filter(url => url && url.trim() !== "").slice(0, 5);
+            } else if (prod.imagem) {
+                imgs = [prod.imagem];
+            }
+
+            if (imgs.length === 0) {
+                imgs = ['https://via.placeholder.com/400?text=Sem+Foto'];
+            }
+
+            // Exibir a primeira imagem por padrão
+            const mainImg = document.getElementById('modal-img');
+            mainImg.src = imgs[0];
+
+            // Renderizar miniaturas se houver mais de 1 foto (ou 1 única foto)
             const thumbsContainer = document.getElementById('modal-thumbnails');
-            thumbsContainer.innerHTML = imgs.map((imgUrl, idx) => `
-                <img src="${imgUrl}" onclick="document.getElementById('modal-img').src='${imgUrl}'" class="w-12 h-12 rounded border border-slate-300 object-cover cursor-pointer hover:border-brandOrange ${idx===0?'border-brandOrange':''}">
-            `).join('');
+            if (imgs.length > 1) {
+                thumbsContainer.innerHTML = imgs.map((imgUrl, idx) => `
+                    <img src="${imgUrl}" 
+                         onclick="changeModalMainImage('${imgUrl}', this)" 
+                         class="thumb-item w-12 h-12 sm:w-14 sm:h-14 rounded border-2 object-cover cursor-pointer hover:border-brandOrange transition ${idx === 0 ? 'border-brandOrange' : 'border-slate-300'}">
+                `).join('');
+            } else {
+                thumbsContainer.innerHTML = ''; // Não exige thumbnails se tiver apenas 1 foto
+            }
 
+            const priceVal = prod.preco ? parseFloat(prod.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Consulte Preço';
             const waMsg = encodeURIComponent(`Olá, gostaria de saber mais sobre o produto: ${prod.nome} (${priceVal})`);
             document.getElementById('modal-wa-btn').href = `https://wa.me/5519997099591?text=${waMsg}`;
 
             productModal.classList.remove('hidden');
         };
+
+        // Função global para trocar a imagem ativa no modal
+        window.changeModalMainImage = (url, element) => {
+            document.getElementById('modal-img').src = url;
+            document.querySelectorAll('.thumb-item').forEach(el => {
+                el.classList.remove('border-brandOrange');
+                el.classList.add('border-slate-300');
+            });
+            element.classList.remove('border-slate-300');
+            element.classList.add('border-brandOrange');
+        };
+
+        window.selectVariationOption = (index) => {
+            if (!selectedProduct || !selectedProduct.variacoes) return;
+            selectedVariation = selectedProduct.variacoes[index];
+
+            document.querySelectorAll('.variation-btn').forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.className = "variation-btn text-xs font-bold px-3 py-1.5 rounded border bg-brandOrange text-white border-brandOrange transition";
+                } else {
+                    btn.className = "variation-btn text-xs font-bold px-3 py-1.5 rounded border bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 transition";
+                }
+            });
+
+            updateModalPriceDisplay();
+        };
+
+        function updateModalPriceDisplay() {
+            let finalPrice = selectedProduct.preco;
+            if (selectedVariation && selectedVariation.preco) {
+                finalPrice = selectedVariation.preco;
+            }
+            const priceVal = finalPrice ? parseFloat(finalPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Consulte Preço';
+            document.getElementById('modal-price').innerText = priceVal;
+        }
 
         document.getElementById('close-modal-btn').onclick = () => {
             productModal.classList.add('hidden');
@@ -1190,33 +1229,45 @@
         };
 
         document.getElementById('modal-copy-link-btn').onclick = () => {
-    if (!selectedProduct) return;
-    
-    // Constrói o link direto incluindo o ID do produto na URL
-    const baseUrl = window.location.origin + window.location.pathname;
-    const productUrl = `${baseUrl}?prod=${selectedProduct.id}`;
-    
-    // Copia o link formatado para a área de transferência
-    navigator.clipboard.writeText(productUrl);
-    showAlert('Link do produto copiado para a área de transferência!', 'Sucesso');
-};
+            if (!selectedProduct) return;
+            const baseUrl = window.location.origin + window.location.pathname;
+            const productUrl = `${baseUrl}?prod=${selectedProduct.id}`;
+            navigator.clipboard.writeText(productUrl);
+            showAlert('Link do produto copiado para a área de transferência!', 'Sucesso');
+        };
 
-        // --- CARRINHO DE COMPRAS ---
+        // --- ADICIONAR AO CARRINHO ---
         document.getElementById('modal-add-cart-btn').onclick = () => {
             if (!selectedProduct) return;
             const qty = parseInt(document.getElementById('modal-qty').value) || 1;
 
-            const existingIndex = cart.findIndex(item => item.id === selectedProduct.id);
+            let itemPrice = selectedProduct.preco;
+            let itemName = selectedProduct.nome;
+
+            if (selectedVariation) {
+                if (selectedVariation.preco) itemPrice = selectedVariation.preco;
+                itemName += ` (${selectedVariation.nome})`;
+            }
+
+            const cartItemId = selectedVariation ? `${selectedProduct.id}_${selectedVariation.nome}` : selectedProduct.id;
+
+            const existingIndex = cart.findIndex(item => item.cartItemId === cartItemId);
             if (existingIndex > -1) {
                 cart[existingIndex].qty += qty;
             } else {
-                cart.push({ ...selectedProduct, qty });
+                cart.push({
+                    ...selectedProduct,
+                    cartItemId,
+                    nome: itemName,
+                    preco: itemPrice,
+                    qty
+                });
             }
 
             updateCartUI();
             productModal.classList.add('hidden');
             openCartDrawer();
-            showAlert(`${selectedProduct.nome} foi adicionado ao carrinho!`, 'Adicionado');
+            showAlert(`${itemName} foi adicionado ao carrinho!`, 'Adicionado');
         };
 
         function updateCartUI() {
@@ -1347,30 +1398,25 @@
         document.getElementById('close-delivery-modal-btn').onclick = () => deliveryModal.classList.add('hidden');
 
         // SUBMIT FORM RETIRADA
-        document.getElementById('pickup-form').onsubmit = (e) => {
-            e.preventDefault();
-            const timeVal = document.getElementById('pickup-time').value;
+document.getElementById('pickup-form').onsubmit = (e) => {
+    e.preventDefault();
 
-            if (!timeVal) return showAlert('Selecione um horário válido para retirada.', 'Campo Obrigatório');
+    checkoutData = {
+        tipo: 'Retirada na Loja',
+        cliente: {
+            nome: document.getElementById('pickup-name').value.trim(),
+            telefone: document.getElementById('pickup-phone').value.trim()
+        }
+    };
 
-            checkoutData = {
-                tipo: 'Retirada na Loja',
-                cliente: {
-                    nome: document.getElementById('pickup-name').value.trim(),
-                    telefone: document.getElementById('pickup-phone').value.trim(),
-                    horarioRetirada: timeVal
-                }
-            };
-
-            pickupModal.classList.add('hidden');
-            paymentMethodModal.classList.remove('hidden');
-        };
+    pickupModal.classList.add('hidden');
+    paymentMethodModal.classList.remove('hidden');
+};
 
         // SUBMIT FORM ENTREGA
         document.getElementById('delivery-form').onsubmit = (e) => {
             e.preventDefault();
 
-            // Pega os valores dos novos campos
             const street = document.getElementById('dev-street').value.trim();
             const number = document.getElementById('dev-number').value.trim();
             const complement = document.getElementById('dev-complement').value.trim();
@@ -1379,7 +1425,6 @@
             const uf = document.getElementById('dev-uf').value.trim();
             const cep = document.getElementById('dev-cep').value.trim();
 
-            // Monta o endereço formatado em texto único para facilidade de exibição
             const fullAddress = `${street}, Nº ${number}${complement ? ' (' + complement + ')' : ''} - ${neighborhood}, ${city}/${uf} - CEP: ${cep}`;
 
             checkoutData = {
@@ -1436,7 +1481,7 @@
             showAlert('Chave Pix/CNPJ copiada!', 'Sucesso');
         };
 
-        // CONFIRMAR PAGAMENTO PIX E REGISTRAR PEDIDO NO FIREBASE
+        // CONFIRMAR PAGAMENTO PIX
         document.getElementById('confirm-payment-btn').onclick = () => {
             const totalSum = cart.reduce((acc, item) => acc + ((parseFloat(item.preco) || 0) * item.qty), 0);
             const orderCode = Math.floor(100000 + Math.random() * 900000);
@@ -1520,105 +1565,6 @@
         }
 
         carouselTimer = setInterval(nextSlide, 5000);
-let selectedVariation = null;
-
-window.openProductModal = (id) => {
-    const prod = globalProducts[id];
-    if (!prod) return;
-
-    selectedProduct = { ...prod, id };
-    selectedVariation = null;
-
-    document.getElementById('modal-title').innerText = prod.nome;
-    document.getElementById('modal-category').innerText = prod.categoria || 'Geral';
-    document.getElementById('modal-type').innerText = `Tipo: ${prod.tipo || 'Padrão'}`;
-    document.getElementById('modal-tag').innerText = prod.tag || 'Destaque';
-    document.getElementById('modal-desc').innerText = prod.descricao || 'Sem descrição detalhada.';
-    document.getElementById('modal-qty').value = 1;
-
-    // Renderizar Variações se existirem
-const variationsWrapper = document.getElementById('modal-variations-wrapper');
-const variationsOptions = document.getElementById('modal-variations-options');
-
-if (prod.variacoes && prod.variacoes.length > 0) {
-    variationsWrapper.classList.remove('hidden');
-    selectedVariation = prod.variacoes[0]; // Seleciona a primeira por padrão
-    
-    variationsOptions.innerHTML = prod.variacoes.map((v, idx) => `
-        <button type="button" onclick="selectVariationOption(${idx})" id="var-btn-${idx}" class="variation-btn text-xs font-bold px-3 py-1.5 rounded border ${idx === 0 ? 'bg-brandOrange text-white border-brandOrange' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'} transition">
-            ${v.nome}
-        </button>
-    `).join('');
-} else {
-    variationsWrapper.classList.add('hidden');
-}
-
-updateModalPriceDisplay();
-
-const imgs = (prod.imagens && prod.imagens.length > 0) ? prod.imagens : [prod.imagem || 'https://via.placeholder.com/400?text=Sem+Foto'];
-document.getElementById('modal-img').src = imgs[0];
-
-productModal.classList.remove('hidden');
-};
-
-// Atualiza o valor exibido conforme a variação escolhida
-window.selectVariationOption = (index) => {
-    if (!selectedProduct || !selectedProduct.variacoes) return;
-    selectedVariation = selectedProduct.variacoes[index];
-
-    document.querySelectorAll('.variation-btn').forEach((btn, idx) => {
-        if (idx === index) {
-            btn.className = "variation-btn text-xs font-bold px-3 py-1.5 rounded border bg-brandOrange text-white border-brandOrange transition";
-        } else {
-            btn.className = "variation-btn text-xs font-bold px-3 py-1.5 rounded border bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 transition";
-        }
-    });
-
-    updateModalPriceDisplay();
-};
-
-function updateModalPriceDisplay() {
-    let finalPrice = selectedProduct.preco;
-    if (selectedVariation && selectedVariation.preco) {
-        finalPrice = selectedVariation.preco;
-    }
-    const priceVal = finalPrice ? parseFloat(finalPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Consulte Preço';
-    document.getElementById('modal-price').innerText = priceVal;
-}
-
-// Atualizar inclusão no Carrinho com a variação selecionada
-document.getElementById('modal-add-cart-btn').onclick = () => {
-    if (!selectedProduct) return;
-    const qty = parseInt(document.getElementById('modal-qty').value) || 1;
-
-    let itemPrice = selectedProduct.preco;
-    let itemName = selectedProduct.nome;
-
-    if (selectedVariation) {
-        if (selectedVariation.preco) itemPrice = selectedVariation.preco;
-        itemName += ` (${selectedVariation.nome})`;
-    }
-
-    const cartItemId = selectedVariation ? `${selectedProduct.id}_${selectedVariation.nome}` : selectedProduct.id;
-
-    const existingIndex = cart.findIndex(item => item.cartItemId === cartItemId);
-    if (existingIndex > -1) {
-        cart[existingIndex].qty += qty;
-    } else {
-        cart.push({
-            ...selectedProduct,
-            cartItemId,
-            nome: itemName,
-            preco: itemPrice,
-            qty
-        });
-    }
-
-    updateCartUI();
-    productModal.classList.add('hidden');
-    openCartDrawer();
-    showAlert(`${itemName} foi adicionado ao carrinho!`, 'Adicionado');
-};
     </script>
 </body>
 </html>
