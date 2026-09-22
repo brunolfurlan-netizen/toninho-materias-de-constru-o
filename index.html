@@ -713,7 +713,7 @@
     <!-- SCRIPT FIREBASE & LÓGICA DA LOJA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, query, orderByChild, equalTo, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { 
             getAuth, 
             signInWithEmailAndPassword, 
@@ -1079,12 +1079,16 @@
                 categoriesMap[cat].forEach(p => {
                     const priceFormatted = p.preco ? parseFloat(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Orçamento';
                     const mainImg = (p.imagens && p.imagens[0]) || p.imagem || 'https://via.placeholder.com/300?text=Sem+Foto';
-
+                    const views = p.pageviews || 0;
                     html += `
                         <div onclick="openProductModal('${p.id}')" class="bg-white rounded-md border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group">
                             <div class="relative bg-slate-100 h-36 sm:h-44 flex items-center justify-center p-2 overflow-hidden">
                                 <img src="${mainImg}" alt="${p.nome}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
                                 ${p.tag ? `<span class="absolute top-2 left-2 bg-brandOrange text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow">${p.tag}</span>` : ''}
+                                <!-- APENAS O CONTADOR DE PAGEVIEW NO SITE -->
+                                <span class="absolute bottom-2 right-2 bg-slate-900/80 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow">
+                                    <i class="fa-solid fa-eye text-orange-400"></i> ${views}
+                                </span>
                             </div>
                             <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
                                 <div>
@@ -1112,11 +1116,17 @@
         const productModal = document.getElementById('product-modal');
         
         window.openProductModal = (id) => {
-            const prod = globalProducts[id];
-            if (!prod) return;
+    const prod = globalProducts[id];
+    if (!prod) return;
 
-            selectedProduct = { ...prod, id };
-            selectedVariation = null;
+    // INCREMENTAR PAGEVIEW NO FIREBASE
+    const productViewsRef = ref(db, `produtos/${id}/pageviews`);
+    runTransaction(productViewsRef, (currentViews) => {
+        return (currentViews || 0) + 1;
+    });
+
+    selectedProduct = { ...prod, id };
+    selectedVariation = null;
 
             document.getElementById('modal-title').innerText = prod.nome;
             document.getElementById('modal-category').innerText = prod.categoria || 'Geral';
