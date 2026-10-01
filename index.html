@@ -180,7 +180,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2B: DADOS PARA ENTREGA -->
+    <!-- MODAL 2B: DADOS PARA ENTREGA COM FRETE -->
     <div id="delivery-modal" class="fixed inset-0 bg-black/60 z-[90] hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 my-8">
             <div class="flex justify-between items-center border-b pb-3 border-slate-100">
@@ -251,6 +251,12 @@
                     </div>
                 </div>
 
+                <!-- ÁREA DE FRETE -->
+                <div id="shipping-options-container" class="mt-3 bg-orange-50 border border-orange-200 p-3 rounded-md hidden space-y-2">
+                    <span class="block text-[11px] font-bold text-brandOrange uppercase">Opção de Frete Calculada:</span>
+                    <div id="shipping-methods-list" class="space-y-1.5 text-xs"></div>
+                </div>
+
                 <button type="submit" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-3 rounded-md uppercase text-xs tracking-wider transition shadow mt-2">
                     Ir para Métodos de Pagamento
                 </button>
@@ -294,6 +300,11 @@
                 <div id="pix-customer-summary" class="text-slate-600 space-y-0.5"></div>
                 <div id="pix-items-summary" class="border-t border-slate-200 pt-2 space-y-1"></div>
                 
+                <div id="pix-shipping-row" class="hidden flex justify-between text-slate-700 font-medium border-t pt-1 border-slate-200">
+                    <span>Frete (<span id="pix-shipping-name"></span>):</span>
+                    <span id="pix-shipping-val">R$ 0,00</span>
+                </div>
+
                 <div id="pix-discount-row" class="hidden flex justify-between text-brandGreen font-bold border-t pt-1 border-slate-200">
                     <span>Desconto (Cupom <span id="pix-coupon-code"></span>):</span>
                     <span id="pix-discount-val">-R$ 0,00</span>
@@ -746,6 +757,23 @@
             updateProfile 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // ==========================================
+        // CONFIGURAÇÕES DE FRETE FACILITADAS
+        // ==========================================
+        const SHIPPING_CONFIG = {
+            originCep: "13140000", // CEP de origem (Paulínia, SP)
+            pauliniaFixedPrice: 10.00, // Frete fixo para Paulínia (Altere o valor facilmente aqui)
+            pauliniaCepPrefixes: ["13140", "13141", "13142", "13143", "13144", "13145", "13146", "13147", "13148"],
+            // Outras cidades/faixas de frete podem ser adicionadas facilmente abaixo no futuro:
+            customRates: {
+                // Exemplo de expansão futura:
+                // "13170": { name: "Sumaré - Região Próxima", price: 20.00 }
+            }
+        };
+
+        let selectedShippingCost = 0;
+        let selectedShippingName = '';
+
         function showAlert(msg, title = "Aviso") {
             const modal = document.getElementById('custom-alert-modal');
             document.getElementById('custom-alert-title').innerText = title;
@@ -895,6 +923,7 @@
                                 <p class="text-slate-600"><strong>Modalidade:</strong> ${order.tipo}</p>
                                 ${order.tipo === 'Retirada na Loja' ? `<p class="text-slate-600"><strong>Horário Retirada:</strong> ${order.cliente.horarioRetirada || 'N/A'}</p>` : ''}
                                 ${order.tipo === 'Entrega' ? `<p class="text-slate-600"><strong>Endereço:</strong> ${order.cliente.endereco || 'N/A'}</p>` : ''}
+                                ${order.freteNome ? `<p class="text-slate-600"><strong>Frete:</strong> ${order.freteNome} (${(parseFloat(order.freteValor) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})</p>` : ''}
                                 ${order.cupomCodigo ? `<p class="text-brandGreen"><strong>Cupom:</strong> ${order.cupomCodigo} (-${(parseFloat(order.descontoAplicado) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})</p>` : ''}
                             </div>
 
@@ -1512,9 +1541,101 @@
         document.getElementById('close-pickup-modal-btn').onclick = () => pickupModal.classList.add('hidden');
         document.getElementById('close-delivery-modal-btn').onclick = () => deliveryModal.classList.add('hidden');
 
+        // BUSCA DE ENDEREÇO VIA CEP E CÁLCULO DE FRETE AUTOMÁTICO
+        const devCepInput = document.getElementById('dev-cep');
+        const shippingContainer = document.getElementById('shipping-options-container');
+        const shippingList = document.getElementById('shipping-methods-list');
+
+        devCepInput.addEventListener('blur', async () => {
+            const cep = devCepInput.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+
+                    if (!data.erro) {
+                        document.getElementById('dev-street').value = data.logradouro || '';
+                        document.getElementById('dev-neighborhood').value = data.bairro || '';
+                        document.getElementById('dev-city').value = data.localidade || '';
+                        document.getElementById('dev-uf').value = data.uf || '';
+
+                        calculateShipping(cep, data.localidade);
+                    } else {
+                        showAlert('CEP não encontrado.', 'Erro no CEP');
+                    }
+                } catch (e) {
+                    console.error('Erro ao consultar CEP:', e);
+                }
+            }
+        });
+
+        async function calculateShipping(destinationCep, cityName) {
+            shippingContainer.classList.remove('hidden');
+            shippingList.innerHTML = '<span class="text-slate-500 font-semibold italic"><i class="fa-solid fa-spinner animate-spin"></i> Calculando frete...</span>';
+
+            const cleanCep = destinationCep.replace(/\D/g, '');
+            const isPaulina = cityName.toLowerCase().includes('paulínia') || 
+                              cityName.toLowerCase().includes('paulinia') || 
+                              SHIPPING_CONFIG.pauliniaCepPrefixes.some(prefix => cleanCep.startsWith(prefix));
+
+            if (isPaulina) {
+                // FRETE FIXO PARA PAULÍNIA
+                selectedShippingCost = SHIPPING_CONFIG.pauliniaFixedPrice;
+                selectedShippingName = 'Entrega Paulínia (Local)';
+
+                shippingList.innerHTML = `
+                    <label class="flex items-center justify-between p-2 bg-white rounded border border-orange-200 cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="shipping_option" checked class="text-brandOrange focus:ring-brandOrange">
+                            <span class="font-bold text-slate-800">${selectedShippingName}</span>
+                        </div>
+                        <span class="font-black text-brandOrange">${selectedShippingCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </label>
+                `;
+            } else {
+                // FRETE CORREIOS (OUTRAS REGIONALIDADES)
+                try {
+                    const correiosApiUrl = `https://swapi.frenet.com.br/shipping/quote`; // Exemplo simulado de integração
+                    // Simulação fallback para Correios PAC / SEDEX fora de Paulínia
+                    const mockPacPrice = 24.50;
+                    const mockSedexPrice = 38.90;
+
+                    selectedShippingCost = mockPacPrice;
+                    selectedShippingName = 'Correios PAC';
+
+                    shippingList.innerHTML = `
+                        <label class="flex items-center justify-between p-2 bg-white rounded border border-orange-200 cursor-pointer mb-1" onclick="selectShippingOption('Correios PAC', ${mockPacPrice})">
+                            <div class="flex items-center gap-2">
+                                <input type="radio" name="shipping_option" checked class="text-brandOrange focus:ring-brandOrange">
+                                <span class="font-bold text-slate-800">Correios PAC</span>
+                            </div>
+                            <span class="font-black text-slate-800">${mockPacPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                        </label>
+                        <label class="flex items-center justify-between p-2 bg-white rounded border border-slate-200 cursor-pointer" onclick="selectShippingOption('Correios SEDEX', ${mockSedexPrice})">
+                            <div class="flex items-center gap-2">
+                                <input type="radio" name="shipping_option" class="text-brandOrange focus:ring-brandOrange">
+                                <span class="font-bold text-slate-800">Correios SEDEX</span>
+                            </div>
+                            <span class="font-black text-slate-800">${mockSedexPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                        </label>
+                    `;
+                } catch (e) {
+                    shippingList.innerHTML = '<span class="text-red-500 font-semibold">Erro ao calcular frete dos Correios. Entre em contato via WhatsApp.</span>';
+                }
+            }
+        }
+
+        window.selectShippingOption = (name, cost) => {
+            selectedShippingName = name;
+            selectedShippingCost = cost;
+        };
+
         // SUBMIT FORM RETIRADA
         document.getElementById('pickup-form').onsubmit = (e) => {
             e.preventDefault();
+
+            selectedShippingCost = 0;
+            selectedShippingName = 'Retirada na Loja';
 
             checkoutData = {
                 tipo: 'Retirada na Loja',
@@ -1539,6 +1660,10 @@
             const city = document.getElementById('dev-city').value.trim();
             const uf = document.getElementById('dev-uf').value.trim();
             const cep = document.getElementById('dev-cep').value.trim();
+
+            if (!selectedShippingName) {
+                return showAlert('Por favor, informe seu CEP para calcular o frete.', 'Aviso');
+            }
 
             const fullAddress = `${street}, Nº ${number}${complement ? ' (' + complement + ')' : ''} - ${neighborhood}, ${city}/${uf} - CEP: ${cep}`;
 
@@ -1566,13 +1691,13 @@
 
         document.getElementById('close-payment-method-btn').onclick = () => paymentMethodModal.classList.add('hidden');
 
-        // PIX SELECT COM EXIBIÇÃO DO DESCONTO DO CUPOM
+        // PIX SELECT COM EXIBIÇÃO DO DESCONTO E FRETE
         document.getElementById('select-pix-btn').onclick = () => {
             paymentMethodModal.classList.add('hidden');
 
             const subtotal = cart.reduce((acc, item) => acc + ((parseFloat(item.preco) || 0) * item.qty), 0);
             let discount = appliedCoupon ? (appliedCoupon.descontoCalculado || 0) : 0;
-            let totalFinal = Math.max(0, subtotal - discount);
+            let totalFinal = Math.max(0, subtotal - discount + selectedShippingCost);
 
             const discountRow = document.getElementById('pix-discount-row');
             if (discount > 0) {
@@ -1581,6 +1706,15 @@
                 discountRow.classList.remove('hidden');
             } else {
                 discountRow.classList.add('hidden');
+            }
+
+            const shippingRow = document.getElementById('pix-shipping-row');
+            if (selectedShippingCost > 0) {
+                document.getElementById('pix-shipping-name').innerText = selectedShippingName;
+                document.getElementById('pix-shipping-val').innerText = selectedShippingCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                shippingRow.classList.remove('hidden');
+            } else {
+                shippingRow.classList.add('hidden');
             }
 
             document.getElementById('pix-total-val').innerText = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -1612,7 +1746,7 @@
         document.getElementById('confirm-payment-btn').onclick = () => {
             const subtotal = cart.reduce((acc, item) => acc + ((parseFloat(item.preco) || 0) * item.qty), 0);
             let discount = appliedCoupon ? (appliedCoupon.descontoCalculado || 0) : 0;
-            let totalFinal = Math.max(0, subtotal - discount);
+            let totalFinal = Math.max(0, subtotal - discount + selectedShippingCost);
             const orderCode = Math.floor(100000 + Math.random() * 900000);
 
             const finalOrder = {
@@ -1623,6 +1757,8 @@
                 cliente: checkoutData.cliente,
                 itens: cart,
                 subtotal: subtotal,
+                freteNome: selectedShippingName,
+                freteValor: selectedShippingCost,
                 cupomCodigo: appliedCoupon ? appliedCoupon.codigo : null,
                 descontoAplicado: discount,
                 valorTotal: totalFinal,
@@ -1638,6 +1774,8 @@
                     thankyouModal.classList.remove('hidden');
                     cart = [];
                     appliedCoupon = null;
+                    selectedShippingCost = 0;
+                    selectedShippingName = '';
                     if(couponInput) couponInput.value = '';
                     if(couponMessage) couponMessage.classList.add('hidden');
                     updateCartUI();
