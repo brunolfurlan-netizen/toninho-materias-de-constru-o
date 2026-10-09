@@ -433,7 +433,7 @@
     <!-- MENU LATERAL (SIDEBAR) -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between border-r border-slate-200">
-        <div class="p-5">
+        <div class="p-5 overflow-y-auto max-h-[calc(100vh-60px)]">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
                 <h3 class="font-bold text-slate-900 uppercase text-sm">Menu Principal</h3>
                 <button id="close-sidebar-btn" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -450,7 +450,7 @@
                 </a>
             </nav>
             <div class="mt-8">
-                <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Categorias</h4>
+                <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Departamentos & Grupos</h4>
                 <div id="sidebar-categories" class="space-y-1 text-xs font-medium text-slate-600"></div>
             </div>
         </div>
@@ -764,11 +764,7 @@
             originCep: "13140000", // CEP de origem (Paulínia, SP)
             pauliniaFixedPrice: 10.00, // Frete fixo para Paulínia (Altere o valor facilmente aqui)
             pauliniaCepPrefixes: ["13140", "13141", "13142", "13143", "13144", "13145", "13146", "13147", "13148"],
-            // Outras cidades/faixas de frete podem ser adicionadas facilmente abaixo no futuro:
-            customRates: {
-                // Exemplo de expansão futura:
-                // "13170": { name: "Sumaré - Região Próxima", price: 20.00 }
-            }
+            customRates: {}
         };
 
         let selectedShippingCost = 0;
@@ -812,7 +808,7 @@
 
         let globalProducts = {};
         let cart = [];
-        let appliedCoupon = null; // Armazena o cupom ativo { codigo, tipo, valor, descontoCalculado }
+        let appliedCoupon = null;
         let selectedProduct = null;
         let selectedVariation = null;
         let checkoutData = { tipo: '', cliente: {} };
@@ -1057,19 +1053,64 @@
             checkUrlProductParam();
         });
 
+        // ==========================================
+        // SISTEMA DE GRUPOS E CATEGORIAS ESTILO COFEMA
+        // ==========================================
         function renderSidebarCategories() {
-            const categoriesSet = new Set();
+            const groupsMap = {};
+
             Object.values(globalProducts).forEach(p => {
-                if (p.categoria) categoriesSet.add(p.categoria);
+                const grupo = p.grupo || 'Diversos';
+                const cat = p.categoria || 'Geral';
+
+                if (!groupsMap[grupo]) {
+                    groupsMap[grupo] = new Set();
+                }
+                groupsMap[grupo].add(cat);
             });
 
             const sidebarCategories = document.getElementById('sidebar-categories');
-            sidebarCategories.innerHTML = Array.from(categoriesSet).map(cat => `
-                <button onclick="filterCategory('${cat}')" class="block w-full text-left py-1 hover:text-brandOrange transition">
-                    • ${cat}
-                </button>
-            `).join('');
+            
+            let html = '';
+            Object.keys(groupsMap).forEach((grupo, index) => {
+                const subCats = Array.from(groupsMap[grupo]);
+
+                html += `
+                    <div class="border-b border-slate-100 pb-1 pt-1">
+                        <button onclick="toggleGroupMenu('group-acc-${index}')" class="w-full flex justify-between items-center py-2 text-xs font-bold text-slate-800 uppercase hover:text-brandOrange transition">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-folder text-brandOrange text-[11px]"></i> ${grupo}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+                        <div id="group-acc-${index}" class="hidden pl-3 space-y-1 my-1 border-l-2 border-orange-200 ml-1">
+                            <button onclick="filterGroup('${grupo}')" class="block w-full text-left py-1 text-[11px] font-bold text-brandOrange uppercase hover:underline">
+                                • Ver tudo de ${grupo}
+                            </button>
+                            ${subCats.map(cat => `
+                                <button onclick="filterCategory('${cat}')" class="block w-full text-left py-1 text-[11px] text-slate-600 hover:text-brandOrange transition">
+                                    • ${cat}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            sidebarCategories.innerHTML = html;
         }
+
+        window.toggleGroupMenu = (elementId) => {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.classList.toggle('hidden');
+            }
+        };
+
+        window.filterGroup = (grupoName) => {
+            searchInput.value = grupoName;
+            renderProducts(grupoName);
+            closeSidebar();
+            document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
+        };
 
         window.filterCategory = (catName) => {
             searchInput.value = catName;
@@ -1084,6 +1125,7 @@
             if (cat) filterCategory(cat);
         };
 
+        // RENDERIZAÇÃO DE PRODUTOS AGRUPADOS (2 NÍVEIS: GRUPO > CATEGORIA)
         function renderProducts(filterTerm = '') {
             const container = document.getElementById('firebase-products-container');
             const term = filterTerm.toLowerCase().trim();
@@ -1093,68 +1135,89 @@
                 return;
             }
 
-            const categoriesMap = {};
+            const groupedData = {};
+
             Object.keys(globalProducts).forEach(key => {
                 const prod = globalProducts[key];
                 prod.id = key;
+                const grupo = prod.grupo || 'Diversos';
                 const cat = prod.categoria || 'Geral';
 
                 const matchesTerm = !term || 
                     (prod.nome && prod.nome.toLowerCase().includes(term)) ||
                     (prod.categoria && prod.categoria.toLowerCase().includes(term)) ||
+                    (prod.grupo && prod.grupo.toLowerCase().includes(term)) ||
                     (prod.tipo && prod.tipo.toLowerCase().includes(term));
 
                 if (matchesTerm) {
-                    if (!categoriesMap[cat]) categoriesMap[cat] = [];
-                    categoriesMap[cat].push(prod);
+                    if (!groupedData[grupo]) groupedData[grupo] = {};
+                    if (!groupedData[grupo][cat]) groupedData[grupo][cat] = [];
+                    groupedData[grupo][cat].push(prod);
                 }
             });
 
-            if (Object.keys(categoriesMap).length === 0) {
+            if (Object.keys(groupedData).length === 0) {
                 container.innerHTML = `<p class="text-center text-slate-400 text-xs italic py-8">Nenhum produto encontrado para "${filterTerm}".</p>`;
                 return;
             }
 
             let html = '';
-            Object.keys(categoriesMap).forEach(cat => {
+
+            Object.keys(groupedData).forEach(grupo => {
                 html += `
-                    <div>
-                        <div class="flex items-center justify-between border-b-2 border-slate-200 pb-2 mb-4">
-                            <h3 class="text-base sm:text-lg font-black text-slate-900 uppercase flex items-center gap-2">
-                                <i class="fa-solid fa-layer-group text-brandOrange"></i> ${cat}
-                            </h3>
-                            <span class="text-[10px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full uppercase">${categoriesMap[cat].length} itens</span>
+                    <div class="bg-white p-4 sm:p-6 rounded-lg border border-slate-200 shadow-sm space-y-6">
+                        <div class="bg-slate-900 text-white px-4 py-3 rounded-md flex items-center justify-between shadow">
+                            <h2 class="text-sm sm:text-base font-black uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-brandOrange"></i> ${grupo}
+                            </h2>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                 `;
 
-                categoriesMap[cat].forEach(p => {
-                    const priceFormatted = p.preco ? parseFloat(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Orçamento';
-                    const mainImg = (p.imagens && p.imagens[0]) || p.imagem || 'https://via.placeholder.com/300?text=Sem+Foto';
+                Object.keys(groupedData[grupo]).forEach(cat => {
+                    const produtos = groupedData[grupo][cat];
 
                     html += `
-                        <div onclick="openProductModal('${p.id}')" class="bg-white rounded-md border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group">
-                            <div class="relative bg-slate-100 h-36 sm:h-44 flex items-center justify-center p-2 overflow-hidden">
-                                <img src="${mainImg}" alt="${p.nome}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
-                                ${p.tag ? `<span class="absolute top-2 left-2 bg-brandOrange text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow">${p.tag}</span>` : ''}
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-brandOrange inline-block"></span> ${cat}
+                                </h3>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full uppercase">${produtos.length} itens</span>
                             </div>
-                            <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
-                                <div>
-                                    <p class="text-[10px] text-brandOrange font-bold uppercase truncate">${p.tipo || 'Material'}</p>
-                                    <h4 class="font-bold text-slate-800 text-xs leading-snug line-clamp-2">${p.nome}</h4>
-                                </div>
-                                <div>
-                                    <p class="text-slate-900 font-black text-sm">${priceFormatted}</p>
-                                    <button class="w-full mt-2 bg-slate-100 group-hover:bg-brandOrange group-hover:text-white text-slate-700 text-[11px] font-bold py-1.5 rounded transition uppercase flex items-center justify-center gap-1">
-                                        <i class="fa-solid fa-eye"></i> Detalhes
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                     `;
+
+                    produtos.forEach(p => {
+                        const priceFormatted = p.preco ? parseFloat(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Orçamento';
+                        const mainImg = (p.imagens && p.imagens[0]) || p.imagem || 'https://via.placeholder.com/300?text=Sem+Foto';
+
+                        html += `
+                            <div onclick="openProductModal('${p.id}')" class="bg-white rounded-md border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group">
+                                <div class="relative bg-slate-100 h-36 sm:h-44 flex items-center justify-center p-2 overflow-hidden">
+                                    <img src="${mainImg}" alt="${p.nome}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300">
+                                    ${p.tag ? `<span class="absolute top-2 left-2 bg-brandOrange text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shadow">${p.tag}</span>` : ''}
+                                </div>
+                                <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
+                                    <div>
+                                        <p class="text-[10px] text-brandOrange font-bold uppercase truncate">${p.tipo || 'Material'}</p>
+                                        <h4 class="font-bold text-slate-800 text-xs leading-snug line-clamp-2">${p.nome}</h4>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-900 font-black text-sm">${priceFormatted}</p>
+                                        <button class="w-full mt-2 bg-slate-100 group-hover:bg-brandOrange group-hover:text-white text-slate-700 text-[11px] font-bold py-1.5 rounded transition uppercase flex items-center justify-center gap-1">
+                                            <i class="fa-solid fa-eye"></i> Detalhes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `</div></div>`;
                 });
 
-                html += `</div></div>`;
+                html += `</div>`;
             });
 
             container.innerHTML = html;
@@ -1171,7 +1234,7 @@
             selectedVariation = null;
 
             document.getElementById('modal-title').innerText = prod.nome;
-            document.getElementById('modal-category').innerText = prod.categoria || 'Geral';
+            document.getElementById('modal-category').innerText = prod.categoria ? `${prod.grupo || 'Geral'} > ${prod.categoria}` : 'Geral';
             document.getElementById('modal-type').innerText = `Tipo: ${prod.tipo || 'Padrão'}`;
             document.getElementById('modal-tag').innerText = prod.tag || 'Destaque';
             document.getElementById('modal-desc').innerText = prod.descricao || 'Sem descrição detalhada.';
@@ -1362,7 +1425,7 @@
                 } else {
                     appliedCoupon = {
                         codigo: foundCoupon.codigo.toUpperCase(),
-                        tipo: foundCoupon.tipo, // 'percent' ou 'fixed'
+                        tipo: foundCoupon.tipo,
                         valor: parseFloat(foundCoupon.valor) || 0
                     };
                     showCouponMsg(`Cupom ${appliedCoupon.codigo} aplicado!`, 'text-brandGreen');
@@ -1398,7 +1461,7 @@
                 } else if (appliedCoupon.tipo === 'fixed') {
                     discount = appliedCoupon.valor;
                 }
-                if (discount > subtotal) discount = subtotal; // Não permite desconto negativo
+                if (discount > subtotal) discount = subtotal;
                 appliedCoupon.descontoCalculado = discount;
             } else {
                 appliedCoupon = null;
@@ -1579,7 +1642,6 @@
                               SHIPPING_CONFIG.pauliniaCepPrefixes.some(prefix => cleanCep.startsWith(prefix));
 
             if (isPaulina) {
-                // FRETE FIXO PARA PAULÍNIA
                 selectedShippingCost = SHIPPING_CONFIG.pauliniaFixedPrice;
                 selectedShippingName = 'Entrega Paulínia (Local)';
 
@@ -1593,10 +1655,7 @@
                     </label>
                 `;
             } else {
-                // FRETE CORREIOS (OUTRAS REGIONALIDADES)
                 try {
-                    const correiosApiUrl = `https://swapi.frenet.com.br/shipping/quote`; // Exemplo simulado de integração
-                    // Simulação fallback para Correios PAC / SEDEX fora de Paulínia
                     const mockPacPrice = 24.50;
                     const mockSedexPrice = 38.90;
 
@@ -1691,7 +1750,7 @@
 
         document.getElementById('close-payment-method-btn').onclick = () => paymentMethodModal.classList.add('hidden');
 
-        // PIX SELECT COM EXIBIÇÃO DO DESCONTO E FRETE
+        // PIX SELECT
         document.getElementById('select-pix-btn').onclick = () => {
             paymentMethodModal.classList.add('hidden');
 
